@@ -6,7 +6,7 @@ CREATE TABLE "questions" (
 	"answered" BOOLEAN NOT NULL DEFAULT 'false',
 	"submitAt" TIMESTAMP NOT NULL DEFAULT 'now()',
 	"answeredAt" TIMESTAMP,
-	"answeredBy" varchar(255),
+	"answeredBy" integer,
 	"answer" TEXT,
 	CONSTRAINT "questions_pk" PRIMARY KEY ("id")
 ) WITH (
