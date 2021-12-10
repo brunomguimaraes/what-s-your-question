@@ -1,9 +1,8 @@
 import express from 'express';
+import * as questionsController from '../controllers/questionsController';
 
 const router = express.Router();
 
-router.post('/', (req, res) => {
-  res.sendStatus(201);
-});
+router.post('/', questionsController.postQuestion);
 
 export default router;

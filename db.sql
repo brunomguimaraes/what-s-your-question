@@ -1,6 +1,7 @@
 CREATE TABLE "questions" (
 	"id" serial NOT NULL,
-	"student" integer NOT NULL,
+	"class" varchar(255) NOT NULL,
+	"student" varchar(255) NOT NULL,
 	"question" varchar(255) NOT NULL,
 	"tags" varchar(255) NOT NULL,
 	"answered" BOOLEAN NOT NULL DEFAULT 'false',
@@ -27,9 +28,4 @@ CREATE TABLE "users" (
 
 
 
-ALTER TABLE "questions" ADD CONSTRAINT "questions_fk0" FOREIGN KEY ("student") REFERENCES "users"("id");
-ALTER TABLE "questions" ADD CONSTRAINT "questions_fk1" FOREIGN KEY ("answeredBy") REFERENCES "users"("id");
-
-
-
-
+ALTER TABLE "questions" ADD CONSTRAINT "questions_fk0" FOREIGN KEY ("answeredBy") REFERENCES "users"("id");
