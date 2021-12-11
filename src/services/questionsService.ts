@@ -19,7 +19,9 @@ export async function postQuestion(question: Question) {
   const isSyntaxValid = validadeQuestionSyntax(question);
   if (!isSyntaxValid) throw new Error();
 
-  await questionsRepository.insertQuestion(question);
+  const questionId = await questionsRepository.insertQuestion(question);
+
+  return questionId;
 }
 
 export async function answerQuestion(answer: Answer) {

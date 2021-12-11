@@ -15,8 +15,9 @@ interface User extends CreateUser {
 export async function registerUser(user: CreateUser) {
   const isSyntaxValid = validadeUserSyntax(user);
   if (!isSyntaxValid) throw new Error();
-
-  await usersRepository.insertUser({ ...user, token: uuid() });
+  const token: string = uuid();
+  await usersRepository.insertUser({ ...user, token });
+  return token;
 }
 
 export async function userExists(auth: string): Promise<boolean | User> {

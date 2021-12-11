@@ -11,9 +11,14 @@ export async function postQuestion(req: Request, res: Response) {
     return res.sendStatus(400);
   }
 
-  await questionsService.postQuestion({ question, student, tags, _class });
+  const questionId = await questionsService.postQuestion({
+    question,
+    student,
+    tags,
+    _class,
+  });
 
-  return res.sendStatus(201);
+  return res.send({ id: questionId }).status(200);
 }
 
 interface Answer {
