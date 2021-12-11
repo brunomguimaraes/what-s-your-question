@@ -22,7 +22,7 @@ export async function insertQuestion(question: Question) {
     VALUES
       ($1, $2, $3, $4)
     RETURNING
-      id;
+      *;
       `,
     [question.student, question.question, question.tags, question._class]
   );

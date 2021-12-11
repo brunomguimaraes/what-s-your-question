@@ -9,7 +9,7 @@ export async function postUser(req: Request, res: Response) {
     return res.sendStatus(400);
   }
 
-  await usersService.registerUser({ name, _class });
+  const registeredToken = await usersService.registerUser({ name, _class });
 
-  return res.sendStatus(201);
+  return res.send(registeredToken).status(200);
 }

@@ -16,7 +16,9 @@ export async function insertUser(user: CreateUser) {
     INSERT INTO users
       (name, class, token)
     VALUES
-      ($1, $2, $3);
+      ($1, $2, $3)
+    RETURNING
+      *;
       `,
     [user.name, user._class, user.token]
   );
