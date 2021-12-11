@@ -51,3 +51,10 @@ export async function getUnansweredQuestions(req: Request, res: Response) {
   const questions = await questionsService.getUnansweredQuestions();
   res.send(questions).status(200);
 }
+
+export async function getQuestionById(req: Request, res: Response) {
+  const id = Number(req.params.id);
+  if (!id) return res.sendStatus(400);
+  const question = await questionsService.getQuestionById(id);
+  return res.send(question).status(200);
+}

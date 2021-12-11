@@ -49,3 +49,19 @@ export async function getUnansweredQuestions() {
     submitAt: question.submitAt,
   }));
 }
+
+export async function getQuestionById(id: number) {
+  const question = await questionsRepository.getQuestionById(id);
+  if (!question.answered) {
+    return {
+      question: question.question,
+      student: question.student,
+      class: question.class,
+      tags: question.tags,
+      answered: question.answered,
+      submitAt: question.submitAt,
+    };
+  }
+  delete question.id;
+  return question;
+}
