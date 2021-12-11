@@ -15,15 +15,18 @@ interface Answer {
 }
 
 export async function insertQuestion(question: Question) {
-  await connection.query(
+  const createdQuestion = await connection.query(
     `
     INSERT INTO questions
       (student, question, tags, class)
     VALUES
-      ($1, $2, $3, $4);
+      ($1, $2, $3, $4)
+    RETURNING
+      id;
       `,
     [question.student, question.question, question.tags, question._class]
   );
+  return createdQuestion.rows[0].id;
 }
 
 export async function getQuestionById(id: number) {
