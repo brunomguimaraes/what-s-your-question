@@ -38,3 +38,14 @@ export async function answerQuestion(answer: Answer) {
   await questionsRepository.insertAnswer({ ...answer, answerTimestamp });
   return true;
 }
+
+export async function getUnansweredQuestions() {
+  const questions = await questionsRepository.getUnansweredQuestions();
+  return questions.map((question: any) => ({
+    id: question.id,
+    question: question.question,
+    student: question.student,
+    class: question.class,
+    submitAt: question.submitAt,
+  }));
+}

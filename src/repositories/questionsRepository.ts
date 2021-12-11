@@ -58,3 +58,15 @@ export async function insertAnswer(answer: Answer) {
     [answer.answerTimestamp, answer.userId, answer.text, answer.questionId]
   );
 }
+
+export async function getUnansweredQuestions() {
+  const questions = await connection.query(`
+    SELECT
+      *
+    FROM
+      questions
+    WHERE
+      answered = false;
+  `);
+  return questions.rows;
+}

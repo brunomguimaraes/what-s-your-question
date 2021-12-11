@@ -46,3 +46,8 @@ export async function postAnswer(req: Request, res: Response) {
 
   return res.sendStatus(201);
 }
+
+export async function getUnansweredQuestions(req: Request, res: Response) {
+  const questions = await questionsService.getUnansweredQuestions();
+  res.send(questions).status(200);
+}
