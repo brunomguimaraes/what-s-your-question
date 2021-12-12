@@ -1,7 +1,7 @@
 export interface Question {
   student: string;
   question: string;
-  tags: string;
+  tags?: string;
   class: string;
 }
 
@@ -15,8 +15,9 @@ export interface QuestionDB extends Question {
 }
 
 export interface UnansweredQuestion extends Question {
-  answered: boolean;
+  answered?: boolean;
   submitAt: Date;
+  id?: number;
 }
 
 export interface AnsweredQuestion extends UnansweredQuestion {

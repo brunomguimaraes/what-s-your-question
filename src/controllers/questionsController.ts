@@ -71,9 +71,17 @@ export async function postAnswer(
   }
 }
 
-export async function getUnansweredQuestions(req: Request, res: Response) {
-  const questions = await questionsService.getUnansweredQuestions();
-  res.send(questions).status(200);
+export async function getUnansweredQuestions(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const questions = await questionsService.getUnansweredQuestions();
+    res.send(questions).status(200);
+  } catch (err) {
+    next(err);
+  }
 }
 
 export async function getQuestionById(req: Request, res: Response) {

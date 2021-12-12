@@ -47,7 +47,7 @@ export async function insertAnswer(answer: Answer) {
   );
 }
 
-export async function getUnansweredQuestions() {
+export async function getUnansweredQuestions(): Promise<QuestionDB[]> {
   const questions = await connection.query(`
     SELECT
       *

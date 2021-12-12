@@ -35,7 +35,7 @@ export async function answerQuestion(answer: Answer) {
   await questionsRepository.insertAnswer({ ...answer, answerTimestamp });
 }
 
-export async function getUnansweredQuestions() {
+export async function getUnansweredQuestions(): Promise<UnansweredQuestion[]> {
   const questions = await questionsRepository.getUnansweredQuestions();
   return questions.map((question: QuestionDB) => ({
     id: question.id,
