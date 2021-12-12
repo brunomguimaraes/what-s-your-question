@@ -8,8 +8,11 @@ import {
   UnansweredQuestion,
 } from '../interfaces/Question';
 import { Answer } from '../interfaces/Answer';
+import SyntaxError from '../errors/SyntaxError';
+import NotFoundError from '../errors/NotFoundError';
+import AlreadyExistsError from '../errors/AlreadyExistsError';
 
-export async function postQuestion(question: Question) {
+export async function postQuestion(question: Question): Promise<number> {
   const isSyntaxValid = validadeQuestionSyntax(question);
   if (!isSyntaxValid.result) throw new SyntaxError(isSyntaxValid.message);
 
@@ -19,18 +22,17 @@ export async function postQuestion(question: Question) {
 }
 
 export async function answerQuestion(answer: Answer) {
-  const isAnswerValid = validadeAnswerSyntax(answer.text);
-  if (!isAnswerValid) return false;
+  const isAnswerValid = validadeAnswerSyntax(answer);
+  if (!isAnswerValid.result) throw new SyntaxError(isAnswerValid.message);
 
-  const questionExists = await questionsRepository.getQuestionById(
-    answer.questionId
-  );
-  if (!questionExists) return false;
+  const question = await questionsRepository.getQuestionById(answer.questionId);
+  if (!question) throw new NotFoundError('question not found');
+  if (question.answered)
+    throw new AlreadyExistsError('this question has already been answered');
 
   const answerTimestamp = new Date();
 
   await questionsRepository.insertAnswer({ ...answer, answerTimestamp });
-  return true;
 }
 
 export async function getUnansweredQuestions() {

@@ -1,11 +1,7 @@
 import Joi from 'joi';
+import { Validation } from '../interfaces/Validation';
 
-interface QuestionValidation {
-  result: boolean;
-  message?: string;
-}
-
-export function validadeQuestionSyntax(obj: object): QuestionValidation {
+export function validadeQuestionSyntax(obj: object): Validation {
   const schema = Joi.object({
     question: Joi.string().min(8).required(),
     student: Joi.string().required(),

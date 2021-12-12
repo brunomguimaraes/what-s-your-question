@@ -2,10 +2,19 @@ import Joi from 'joi';
 
 export function validadeUserSyntax(obj: object) {
   const schema = Joi.object({
-    name: Joi.string().required(),
-    _class: Joi.string().required(),
+    name: Joi.string().min(3).required(),
+    class: Joi.string().required(),
   });
 
   const validation = schema.validate(obj);
-  return !validation.error;
+
+  if (validation.error) {
+    return {
+      result: false,
+      message: validation.error.details[0].message,
+    };
+  }
+  return {
+    result: true,
+  };
 }

@@ -1,8 +1,8 @@
 import connection from '../database';
-import { Question } from '../interfaces/Question';
+import { QuestionDB, Question } from '../interfaces/Question';
 import { Answer } from '../interfaces/Answer';
 
-export async function insertQuestion(question: Question) {
+export async function insertQuestion(question: Question): Promise<number> {
   const createdQuestion = await connection.query(
     `
     INSERT INTO questions
@@ -17,7 +17,7 @@ export async function insertQuestion(question: Question) {
   return createdQuestion.rows[0].id;
 }
 
-export async function getQuestionById(id: number) {
+export async function getQuestionById(id: number): Promise<QuestionDB> {
   const question = await connection.query(
     `
     SELECT
