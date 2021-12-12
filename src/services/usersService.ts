@@ -6,7 +6,7 @@ import UnauthorizedError from '../errors/UnauthorizedError';
 import { CreateUser, User } from '../interfaces/User';
 import SyntaxError from '../errors/SyntaxError';
 
-export async function registerUser(user: CreateUser) {
+export async function registerUser(user: CreateUser): Promise<string> {
   const isSyntaxValid = validadeUserSyntax(user);
   if (!isSyntaxValid.result) throw new SyntaxError(isSyntaxValid.message);
 
