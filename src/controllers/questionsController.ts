@@ -1,50 +1,74 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 
 import * as questionsService from '../services/questionsService';
 import * as usersService from '../services/usersService';
+import { Question } from '../interfaces/Question';
+import SyntaxError from '../errors/SyntaxError';
+import UnauthorizedError from '../errors/UnauthorizedError';
 
-export async function postQuestion(req: Request, res: Response) {
-  const { question, student, tags } = req.body;
-  const _class = req.body.class;
+export async function postQuestion(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  const question: Question = req.body;
 
-  if (!question || !student || !tags || !_class) {
-    return res.sendStatus(400);
+  try {
+    if (
+      !question.question ||
+      !question.student ||
+      !question.tags ||
+      !question.class
+    ) {
+      throw new SyntaxError('missing property in request`s body');
+    }
+
+    const questionId = await questionsService.postQuestion(question);
+
+    return res.send({ id: questionId }).status(200);
+  } catch (err) {
+    if (err.name === 'SyntaxError') {
+      return res.status(400).send(err.message);
+    }
+    return next(err);
   }
-
-  const questionId = await questionsService.postQuestion({
-    question,
-    student,
-    tags,
-    _class,
-  });
-
-  return res.send({ id: questionId }).status(200);
 }
 
-interface Answer {
-  answer: string;
-}
-
-export async function postAnswer(req: Request, res: Response) {
-  const auth = req.headers.authorization;
+export async function postAnswer(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  const auth: string = req.headers.authorization;
   const id = Number(req.params.id);
 
-  if (!id) return res.sendStatus(400);
-  if (!auth) return res.sendStatus(401);
+  try {
+    if (!id) throw new SyntaxError('invalid question id');
+    if (!auth) throw new UnauthorizedError('token has not been provided');
 
-  const user = usersService.userExists(auth);
-  if (!user) return res.sendStatus(401);
+    const user = await usersService.getUserByToken(auth);
 
-  const { answer }: Answer = req.body;
+    const { answer }: { answer: string } = req.body;
 
-  const result = await questionsService.answerQuestion({
-    text: answer,
-    questionId: id,
-    userId: 1,
-  });
-  if (!result) return res.sendStatus(400);
+    await questionsService.answerQuestion({
+      text: answer,
+      questionId: id,
+      userId: user.id,
+    });
 
-  return res.sendStatus(201);
+    return res.sendStatus(201);
+  } catch (err) {
+    if (err.name === 'SyntaxError') {
+      return res.status(400).send(err.message);
+    }
+    if (err.name === 'UnauthorizedError') {
+      return res.status(401).send(err.message);
+    }
+    if (err.name === 'AlreadyExistsError') {
+      return res.status(403).send(err.message);
+    }
+    return next(err);
+  }
 }
 
 export async function getUnansweredQuestions(req: Request, res: Response) {

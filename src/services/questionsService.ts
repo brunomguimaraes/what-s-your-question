@@ -1,23 +1,20 @@
-import { validadeQuestionSyntax } from '../schemas/questionSchema';
+import { validadeQuestionSyntax } from '../validations/questionValidation';
 import * as questionsRepository from '../repositories/questionsRepository';
-import { validadeAnswerSyntax } from '../schemas/answerSchema';
+import { validadeAnswerSyntax } from '../validations/answerValidation';
+import {
+  AnsweredQuestion,
+  Question,
+  QuestionDB,
+  UnansweredQuestion,
+} from '../interfaces/Question';
+import { Answer } from '../interfaces/Answer';
+import SyntaxError from '../errors/SyntaxError';
+import NotFoundError from '../errors/NotFoundError';
+import AlreadyExistsError from '../errors/AlreadyExistsError';
 
-interface Question {
-  student: string;
-  question: string;
-  tags: string;
-  _class: string;
-}
-
-interface Answer {
-  text: string;
-  questionId: number;
-  userId: number;
-}
-
-export async function postQuestion(question: Question) {
+export async function postQuestion(question: Question): Promise<number> {
   const isSyntaxValid = validadeQuestionSyntax(question);
-  if (!isSyntaxValid) throw new Error();
+  if (!isSyntaxValid.result) throw new SyntaxError(isSyntaxValid.message);
 
   const questionId = await questionsRepository.insertQuestion(question);
 
@@ -25,23 +22,22 @@ export async function postQuestion(question: Question) {
 }
 
 export async function answerQuestion(answer: Answer) {
-  const isAnswerValid = validadeAnswerSyntax(answer.text);
-  if (!isAnswerValid) return false;
+  const isAnswerValid = validadeAnswerSyntax(answer);
+  if (!isAnswerValid.result) throw new SyntaxError(isAnswerValid.message);
 
-  const questionExists = await questionsRepository.getQuestionById(
-    answer.questionId
-  );
-  if (!questionExists) return false;
+  const question = await questionsRepository.getQuestionById(answer.questionId);
+  if (!question) throw new NotFoundError('question not found');
+  if (question.answered)
+    throw new AlreadyExistsError('this question has already been answered');
 
   const answerTimestamp = new Date();
 
   await questionsRepository.insertAnswer({ ...answer, answerTimestamp });
-  return true;
 }
 
 export async function getUnansweredQuestions() {
   const questions = await questionsRepository.getUnansweredQuestions();
-  return questions.map((question: any) => ({
+  return questions.map((question: QuestionDB) => ({
     id: question.id,
     question: question.question,
     student: question.student,
@@ -50,7 +46,9 @@ export async function getUnansweredQuestions() {
   }));
 }
 
-export async function getQuestionById(id: number) {
+export async function getQuestionById(
+  id: number
+): Promise<UnansweredQuestion | AnsweredQuestion> {
   const question = await questionsRepository.getQuestionById(id);
   if (!question.answered) {
     return {

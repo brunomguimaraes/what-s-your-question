@@ -1,20 +1,8 @@
 import connection from '../database';
+import { QuestionDB, Question } from '../interfaces/Question';
+import { Answer } from '../interfaces/Answer';
 
-interface Question {
-  student: string;
-  question: string;
-  tags: string;
-  _class: string;
-}
-
-interface Answer {
-  text: string;
-  questionId: number;
-  userId: number;
-  answerTimestamp: Date;
-}
-
-export async function insertQuestion(question: Question) {
+export async function insertQuestion(question: Question): Promise<number> {
   const createdQuestion = await connection.query(
     `
     INSERT INTO questions
@@ -24,12 +12,12 @@ export async function insertQuestion(question: Question) {
     RETURNING
       *;
       `,
-    [question.student, question.question, question.tags, question._class]
+    [question.student, question.question, question.tags, question.class]
   );
   return createdQuestion.rows[0].id;
 }
 
-export async function getQuestionById(id: number) {
+export async function getQuestionById(id: number): Promise<QuestionDB> {
   const question = await connection.query(
     `
     SELECT

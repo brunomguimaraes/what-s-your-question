@@ -1,14 +1,5 @@
 import connection from '../database';
-
-interface CreateUser {
-  name: string;
-  _class: string;
-  token: string;
-}
-
-interface User extends CreateUser {
-  id: number;
-}
+import { CreateUser, User } from '../interfaces/User';
 
 export async function insertUser(user: CreateUser) {
   await connection.query(
@@ -20,7 +11,7 @@ export async function insertUser(user: CreateUser) {
     RETURNING
       *;
       `,
-    [user.name, user._class, user.token]
+    [user.name, user.class, user.token]
   );
 }
 
