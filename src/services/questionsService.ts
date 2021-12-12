@@ -50,6 +50,9 @@ export async function getQuestionById(
   id: number
 ): Promise<UnansweredQuestion | AnsweredQuestion> {
   const question = await questionsRepository.getQuestionById(id);
+  if (!question) throw new NotFoundError('question not found');
+
+  delete question.id;
   if (!question.answered) {
     return {
       question: question.question,
@@ -60,6 +63,5 @@ export async function getQuestionById(
       submitAt: question.submitAt,
     };
   }
-  delete question.id;
   return question;
 }
