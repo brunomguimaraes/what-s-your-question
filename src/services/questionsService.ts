@@ -1,23 +1,17 @@
-import { validadeQuestionSyntax } from '../schemas/questionSchema';
+import { validadeQuestionSyntax } from '../validations/questionValidation';
 import * as questionsRepository from '../repositories/questionsRepository';
-import { validadeAnswerSyntax } from '../schemas/answerSchema';
-
-interface Question {
-  student: string;
-  question: string;
-  tags: string;
-  _class: string;
-}
-
-interface Answer {
-  text: string;
-  questionId: number;
-  userId: number;
-}
+import { validadeAnswerSyntax } from '../validations/answerValidation';
+import {
+  AnsweredQuestion,
+  Question,
+  QuestionDB,
+  UnansweredQuestion,
+} from '../interfaces/Question';
+import { Answer } from '../interfaces/Answer';
 
 export async function postQuestion(question: Question) {
   const isSyntaxValid = validadeQuestionSyntax(question);
-  if (!isSyntaxValid) throw new Error();
+  if (!isSyntaxValid.result) throw new SyntaxError(isSyntaxValid.message);
 
   const questionId = await questionsRepository.insertQuestion(question);
 
@@ -41,7 +35,7 @@ export async function answerQuestion(answer: Answer) {
 
 export async function getUnansweredQuestions() {
   const questions = await questionsRepository.getUnansweredQuestions();
-  return questions.map((question: any) => ({
+  return questions.map((question: QuestionDB) => ({
     id: question.id,
     question: question.question,
     student: question.student,
@@ -50,7 +44,9 @@ export async function getUnansweredQuestions() {
   }));
 }
 
-export async function getQuestionById(id: number) {
+export async function getQuestionById(
+  id: number
+): Promise<UnansweredQuestion | AnsweredQuestion> {
   const question = await questionsRepository.getQuestionById(id);
   if (!question.answered) {
     return {

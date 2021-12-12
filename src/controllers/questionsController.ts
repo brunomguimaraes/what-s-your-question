@@ -1,24 +1,35 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 
 import * as questionsService from '../services/questionsService';
 import * as usersService from '../services/usersService';
 
-export async function postQuestion(req: Request, res: Response) {
+export async function postQuestion(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   const { question, student, tags } = req.body;
   const _class = req.body.class;
 
-  if (!question || !student || !tags || !_class) {
-    return res.sendStatus(400);
+  try {
+    if (!question || !student || !tags || !_class) {
+      throw new SyntaxError('missing property in request`s body');
+    }
+
+    const questionId = await questionsService.postQuestion({
+      question,
+      student,
+      tags,
+      class: _class,
+    });
+
+    return res.send({ id: questionId }).status(200);
+  } catch (error) {
+    if (error.name === 'SyntaxError') {
+      return res.status(400).send(error.message);
+    }
+    return next(error);
   }
-
-  const questionId = await questionsService.postQuestion({
-    question,
-    student,
-    tags,
-    _class,
-  });
-
-  return res.send({ id: questionId }).status(200);
 }
 
 interface Answer {

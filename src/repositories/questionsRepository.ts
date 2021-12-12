@@ -1,18 +1,6 @@
 import connection from '../database';
-
-interface Question {
-  student: string;
-  question: string;
-  tags: string;
-  _class: string;
-}
-
-interface Answer {
-  text: string;
-  questionId: number;
-  userId: number;
-  answerTimestamp: Date;
-}
+import { Question } from '../interfaces/Question';
+import { Answer } from '../interfaces/Answer';
 
 export async function insertQuestion(question: Question) {
   const createdQuestion = await connection.query(
@@ -24,7 +12,7 @@ export async function insertQuestion(question: Question) {
     RETURNING
       *;
       `,
-    [question.student, question.question, question.tags, question._class]
+    [question.student, question.question, question.tags, question.class]
   );
   return createdQuestion.rows[0].id;
 }

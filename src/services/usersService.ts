@@ -1,7 +1,7 @@
 import { v4 as uuid } from 'uuid';
-import { validadeUserSyntax } from '../schemas/userSchema';
+import { validadeUserSyntax } from '../validations/userValidation';
 import * as usersRepository from '../repositories/usersRepository';
-import isBearerToken from '../schemas/bearerTokenSchema';
+import isBearerToken from '../validations/bearerTokenValidation';
 
 interface CreateUser {
   name: string;
