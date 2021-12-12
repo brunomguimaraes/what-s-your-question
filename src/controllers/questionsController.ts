@@ -71,14 +71,38 @@ export async function postAnswer(
   }
 }
 
-export async function getUnansweredQuestions(req: Request, res: Response) {
-  const questions = await questionsService.getUnansweredQuestions();
-  res.send(questions).status(200);
+export async function getUnansweredQuestions(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const questions = await questionsService.getUnansweredQuestions();
+    res.send(questions).status(200);
+  } catch (err) {
+    next(err);
+  }
 }
 
-export async function getQuestionById(req: Request, res: Response) {
+export async function getQuestionById(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   const id = Number(req.params.id);
-  if (!id) return res.sendStatus(400);
-  const question = await questionsService.getQuestionById(id);
-  return res.send(question).status(200);
+  try {
+    if (!id) throw new SyntaxError('invalid question id');
+
+    const question = await questionsService.getQuestionById(id);
+
+    return res.send(question).status(200);
+  } catch (err) {
+    if (err.name === 'SyntaxError') {
+      return res.status(400).send(err.message);
+    }
+    if (err.name === 'NotFoundError') {
+      return res.status(404).send(err.message);
+    }
+    return next(err);
+  }
 }
