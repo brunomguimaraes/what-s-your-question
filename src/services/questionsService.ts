@@ -26,7 +26,7 @@ export async function answerQuestion(answer: Answer) {
   if (!isAnswerValid.result) throw new SyntaxError(isAnswerValid.message);
 
   const question = await questionsRepository.getQuestionById(answer.questionId);
-  if (!question) throw new NotFoundError('question not found');
+  if (!question) throw new NotFoundError('this question does not exist');
   if (question.answered)
     throw new AlreadyExistsError('this question has already been answered');
 

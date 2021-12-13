@@ -4,7 +4,7 @@ import { Validation } from '../interfaces/Validation';
 export function validadeQuestionSyntax(obj: object): Validation {
   const schema = Joi.object({
     question: Joi.string().min(8).required(),
-    student: Joi.string().required(),
+    student: Joi.string().min(3).required(),
     class: Joi.string().required(),
     tags: Joi.string().required(),
   });

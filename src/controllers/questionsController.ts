@@ -61,6 +61,9 @@ export async function postAnswer(
     if (err.name === 'SyntaxError') {
       return res.status(400).send(err.message);
     }
+    if (err.name === 'NotFoundError') {
+      return res.status(400).send(err.message);
+    }
     if (err.name === 'UnauthorizedError') {
       return res.status(401).send(err.message);
     }
