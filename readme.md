@@ -6,6 +6,7 @@ This is an application where you can ask your classmates the darkest questions a
 
 - NodeJS
 - ExpressJS
+- PostgreSQL
 - nodemon
 - pg
 - dotenv
