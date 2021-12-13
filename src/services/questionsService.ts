@@ -16,7 +16,12 @@ export async function postQuestion(question: Question): Promise<number> {
   const isSyntaxValid = validadeQuestionSyntax(question);
   if (!isSyntaxValid.result) throw new SyntaxError(isSyntaxValid.message);
 
-  const questionId = await questionsRepository.insertQuestion(question);
+  const submitAt = new Date(Date.now());
+
+  const questionId = await questionsRepository.insertQuestion({
+    ...question,
+    submitAt,
+  });
 
   return questionId;
 }
@@ -26,13 +31,14 @@ export async function answerQuestion(answer: Answer) {
   if (!isAnswerValid.result) throw new SyntaxError(isAnswerValid.message);
 
   const question = await questionsRepository.getQuestionById(answer.questionId);
+
   if (!question) throw new NotFoundError('this question does not exist');
   if (question.answered)
     throw new AlreadyExistsError('this question has already been answered');
 
-  const answerTimestamp = new Date();
+  const answeredAt = new Date(Date.now());
 
-  await questionsRepository.insertAnswer({ ...answer, answerTimestamp });
+  await questionsRepository.insertAnswer({ ...answer, answeredAt });
 }
 
 export async function getUnansweredQuestions(): Promise<UnansweredQuestion[]> {
