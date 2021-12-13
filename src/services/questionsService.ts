@@ -28,6 +28,7 @@ export async function postQuestion(question: Question): Promise<number> {
 
 export async function answerQuestion(answer: Answer) {
   const isAnswerValid = validadeAnswerSyntax(answer);
+
   if (!isAnswerValid.result) throw new SyntaxError(isAnswerValid.message);
 
   const question = await questionsRepository.getQuestionById(answer.questionId);

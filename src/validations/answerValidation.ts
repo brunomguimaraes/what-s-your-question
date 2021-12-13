@@ -4,13 +4,13 @@ import { Validation } from '../interfaces/Validation';
 
 export function validadeAnswerSyntax(answer: Answer): Validation {
   const schema = Joi.object({
-    text: Joi.string().min(6).required(),
-    questioniId: Joi.number().required(),
+    answer: Joi.string().min(6).required(),
+    questionId: Joi.number().required(),
     userId: Joi.number().required(),
   });
 
   const validation = schema.validate(answer);
-  if (!validation.error)
+  if (validation.error)
     return {
       result: false,
       message: validation.error.details[0].message,

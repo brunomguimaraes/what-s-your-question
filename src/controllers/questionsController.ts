@@ -51,7 +51,7 @@ export async function postAnswer(
     const { answer }: { answer: string } = req.body;
 
     await questionsService.answerQuestion({
-      text: answer,
+      answer,
       questionId: id,
       userId: user.id,
     });

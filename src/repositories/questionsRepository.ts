@@ -49,7 +49,7 @@ export async function insertAnswer(answer: Answer) {
         answered = true
     WHERE id = $4;
   `,
-    [answer.answeredAt, answer.userId, answer.text, answer.questionId]
+    [answer.answeredAt, answer.userId, answer.answer, answer.questionId]
   );
 }
 
