@@ -6,13 +6,19 @@ export async function insertQuestion(question: Question): Promise<number> {
   const createdQuestion = await connection.query(
     `
     INSERT INTO questions
-      (student, question, tags, class)
+      (student, question, tags, class, "submitAt")
     VALUES
-      ($1, $2, $3, $4)
+      ($1, $2, $3, $4, $5)
     RETURNING
       *;
       `,
-    [question.student, question.question, question.tags, question.class]
+    [
+      question.student,
+      question.question,
+      question.tags,
+      question.class,
+      question.submitAt,
+    ]
   );
   return createdQuestion.rows[0].id;
 }
@@ -21,11 +27,21 @@ export async function getQuestionById(id: number): Promise<QuestionDB> {
   const question = await connection.query(
     `
     SELECT
-      *
+      questions.question,
+      questions.student,
+      questions.class,
+      questions.tags,
+      questions.answered,
+      questions."submitAt",
+      questions."answeredAt",
+      users.name AS "answeredBy",
+      questions.answer
     FROM
       questions
+    LEFT JOIN users ON
+      users.id = "answeredBy"
     WHERE
-      id = $1;
+      questions.id = $1;
     `,
     [id]
   );
@@ -43,7 +59,7 @@ export async function insertAnswer(answer: Answer) {
         answered = true
     WHERE id = $4;
   `,
-    [answer.answerTimestamp, answer.userId, answer.text, answer.questionId]
+    [answer.answeredAt, answer.userId, answer.answer, answer.questionId]
   );
 }
 

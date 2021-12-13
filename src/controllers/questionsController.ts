@@ -51,7 +51,7 @@ export async function postAnswer(
     const { answer }: { answer: string } = req.body;
 
     await questionsService.answerQuestion({
-      text: answer,
+      answer,
       questionId: id,
       userId: user.id,
     });
@@ -59,6 +59,9 @@ export async function postAnswer(
     return res.sendStatus(201);
   } catch (err) {
     if (err.name === 'SyntaxError') {
+      return res.status(400).send(err.message);
+    }
+    if (err.name === 'NotFoundError') {
       return res.status(400).send(err.message);
     }
     if (err.name === 'UnauthorizedError') {
