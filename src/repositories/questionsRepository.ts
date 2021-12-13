@@ -27,11 +27,21 @@ export async function getQuestionById(id: number): Promise<QuestionDB> {
   const question = await connection.query(
     `
     SELECT
-      *
+      questions.question,
+      questions.student,
+      questions.class,
+      questions.tags,
+      questions.answered,
+      questions."submitAt",
+      questions."answeredAt",
+      users.name AS "answeredBy",
+      questions.answer
     FROM
       questions
+    LEFT JOIN users ON
+      users.id = "answeredBy"
     WHERE
-      id = $1;
+      questions.id = $1;
     `,
     [id]
   );

@@ -6,5 +6,6 @@ export default async function errorHandler(
   res: Response,
   _next: NextFunction
 ) {
+  console.log(err);
   return res.sendStatus(500);
 }

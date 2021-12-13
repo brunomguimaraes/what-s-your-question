@@ -16,7 +16,6 @@ export interface QuestionDB extends Question {
 
 export interface UnansweredQuestion extends Question {
   answered?: boolean;
-  id?: number;
 }
 
 export interface AnsweredQuestion extends UnansweredQuestion {

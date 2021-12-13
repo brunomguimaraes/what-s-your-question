@@ -59,7 +59,6 @@ export async function getQuestionById(
   const question = await questionsRepository.getQuestionById(id);
   if (!question) throw new NotFoundError('question not found');
 
-  delete question.id;
   if (!question.answered) {
     return {
       question: question.question,
